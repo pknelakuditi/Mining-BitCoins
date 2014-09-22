@@ -1,2 +1,12 @@
 compile
 eclipse
+compile
+sbt compile
+compile
+sbt
+compile
+run
+compile
+run
+compile
+run

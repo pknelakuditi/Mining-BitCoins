@@ -11,4 +11,4 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-remote" % "2.3.6"
 )
 
-addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "2.5.0")
+
