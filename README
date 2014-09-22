@@ -1,0 +1,88 @@
+COP5615 - Distributed Operating Systems Project 1 
+-------------------------------------------------
+
+By
+Pavan Kumar Nelakuditi	95761018   pavannelakuditi@ufl.edu
+srikrishna jagarlapudi  29143108   sjagarlapudi@ufl.edu
+
+Implementation:
+--------------
+commands needed to run this 
+ scalac project1.scala
+ scala project1 4 
+   
+To run this part of project you can pass two parameters , first one is for number of zeros second parameter is no of actors.
+by default zeros will be 5 and no of actors will be eight 
+
+Distributed Implementation:
+--------------------------
+This part of project is done in two different files BCServer.scala which acts client accommodating server ,takes no of zeroes as argument and BCClient.scala which acts client ,takes server ip as argument
+To run succesfully these scala files need to be kept in different projects and server ip should be determined and changed in server scala file and argument of client file.
+
+This project can be run with sbt also which needs an built.sbt file.
+
+
+
+
+1). work size determination and running "scala project1.scala 4" with different sizes and actors for 
+input-size      
+1000	
+with different number of actors
+1
+real	0m1.053s	user	0m1.637s	sys		0m0.082s
+4
+real	0m1.030s	user	0m3.597s	sys		0m0.051s
+8
+real	0m1.205s	user	0m5.465s	sys		0m0.119s
+
+input-size      
+10000	
+with different number of actors
+1
+real	0m1.851s	user	0m2.745s	sys		0m0.077s
+4
+real	0m1.560s	user	0m6.030s	sys		0m0.144s
+8
+real	0m2.192s	user	0m12.237s	sys		0m0.195s
+12
+real	0m2.467s	user	0m14.133s	sys		0m0.182s
+
+input-size      
+100000
+with different number of actors
+1
+real	0m4.860s	user	0m6.339s	sys		0m0.130s
+4
+real	0m6.505s	user	0m26.269s	sys	 	0m0.177s
+8
+real	0m9.950s	user	1m4.296s	sys		0m0.579s
+12
+real	0m14.718s	user	1m32.855s	sys		0m0.759s
+
+input-size
+1000000
+with 12 actors
+real	1m32.705s
+user	10m17.719s
+sys		0m6.579s
+
+cpu/real for actors 8 (which is giving best results out of 1,4,8,12)
+6.7 		6.46 		5.671532847 	4.564
+(1000000)	(100000)	(10000)			(1000)
+
+Best size for workSize is 1000000 with actors 8.
+
+2). see results.txt
+
+3).time scala project1.scala 5
+
+real	1m29.916s
+user	9m50.700s
+sys		0m6.499s
+
+4).coin with the most 0s you managed to find 7 zeros
+ 
+pavannelakuditi.R|Jqt|'`SBGLH`a]M(x  0000000c1d31c7f05dad46d526072d3a8194497cb8f666451380a73e6c5c70a1
+
+
+5). I was able to connect 4 clients to the server
