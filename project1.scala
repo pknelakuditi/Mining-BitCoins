@@ -77,7 +77,7 @@ class Master(k: Int, a: Int) extends Actor {
      // println("started calculate")
      val message_count = 20
      for (i <- 1 to message_count) {
-     println("message no : "+i)
+    // println("message no : "+i)
       worker ! Work(noOfZeros)
     }
 

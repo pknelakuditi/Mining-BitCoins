@@ -46,7 +46,7 @@ class Worker(length: Int) extends Actor {
     val b = "%0" + noOfZeros + "d"
     val z = b.format(0)
     var iter=0
-    while (iter < 100000) {
+    while (iter < 1000000) {
       val hashMe = "pavannelakuditi" + randomString(length)
       iter+=1
       val sha256 = cryptographicHash(hashMe)

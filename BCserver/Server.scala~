@@ -11,7 +11,8 @@ import scala.util.control.Breaks
 case class startClient()
 case class start(kval :Int)
 case class Work(noOfZeros: Int)
-case class results(str : String)
+case class results(res : ArrayBuffer[String])
+case class results1(res : String)
 
 object Server extends App{
     val hostname = InetAddress.getLocalHost.getHostName
@@ -43,13 +44,17 @@ class RemoteLiaison(kval:Int) extends Actor{
 			case "start" => println("Remote Liaison up and running")
 			case startClient() => 
 				println("start the client")
-				sender ! start(4)
+				sender ! start(5)
 				println("send msg to client")
 			case "close" => println("Remote Liaison shutting down")
 						 context.system.shutdown()
-			case results(str) =>
-				println(str)
-				
+			case results(res : ArrayBuffer[String]) =>
+				println("From Client")
+				for(i <- 0 until res.length) println(res(i))
+			case results1(r : String) => 
+				val e= reee.split("   ")
+				println("fake")
+				for(i <- 0 until e.length) println(e(i))
 		}
 }
 
@@ -89,7 +94,7 @@ class Worker(length: Int) extends Actor {
     val b = "%0" + noOfZeros + "d"
     val z = b.format(0)
     var iter=0
-    while (iter < 1000000) {
+    while (true) {
    // println("in while loop")
       val hashMe = "pavannelakuditi" + randomString(length)
       iter+=1
@@ -109,23 +114,20 @@ class Master(k: Int, a: Int) extends Actor {
   def noOfActors = a
   def noOfZeros = k
   var stop = 0
-  val workers = new Array[ActorRef](noOfActors)
+  
   println("no of actors "+ a)
-  for (i <- 0 until a) {
-    //println("intialization of actors")
-    workers(i) = context.actorOf(Props(new Worker(20)), name = "actor" + "%s".format(i))
-  }
+val worker = context.actorOf(Props(new Worker(20)).withRouter(RoundRobinRouter(noOfActors)), name = "worker")
 
   def receive = {
 
     case "Calculate" =>
      // println("started calculate")
       var i = 0
-      while (i < a) {
-        //println("in while loop " + i)
-        workers(i) ! Work(noOfZeros)
-        i = i + 1
-      }
+      val message_count = 2000
+        for (i <- 1 to message_count) {
+    // println("message no : "+i)
+      worker ! Work(noOfZeros)
+    }
     case "Close" =>
       stop += 1
       if (stop == a) {

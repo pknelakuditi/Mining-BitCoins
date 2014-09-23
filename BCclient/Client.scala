@@ -11,7 +11,9 @@ import scala.util.Random
 
 case class startClient()
 case class start(kval :Int)
-case class results(str : String)
+case class results(str : ArrayBuffer[String])
+case class localMessage(res : String)
+case class results1(res : String)
 
 object Remote extends App {	
    val hostname = InetAddress.getLocalHost.getHostName
@@ -39,15 +41,15 @@ object Remote extends App {
 
 
 
-case class Work(noOfZeros: Int,remote : ActorRef)
+case class Work(noOfZeros: Int)
 
 class Worker(length: Int) extends Actor {
 
   def receive = {
 
-    case Work(k,remote) =>
+    case Work(k) =>
      // println("work")
-      calculateBitcoin(k,remote)
+      calculateBitcoin(k)
       sender ! "Close"
   }
 
@@ -68,7 +70,7 @@ class Worker(length: Int) extends Actor {
       return hashedString
     }
 
-  def calculateBitcoin(noOfZeros: Int,remote : ActorRef) {
+  def calculateBitcoin(noOfZeros: Int) {
    // println("started calulating bit coin")
 
     val start = System.currentTimeMillis();
@@ -77,18 +79,22 @@ class Worker(length: Int) extends Actor {
     val b = "%0" + noOfZeros + "d"
     val z = b.format(0)
     var iter=0
-    while (iter < 1000000) {
+    var result =""
+    while (iter < 200000) {
       val hashMe = "pavannelakuditi" + randomString(length)
       iter+=1
       val sha256 = cryptographicHash(hashMe)
-
+      
       if (sha256.substring(0, noOfZeros).equals(z)) {
         println(hashMe + "  " + sha256)
- 		str+=hashMe + " " + sha256
+ 		result=hashMe + " " + sha256+"   "
+ 		//println("sending local msg")
+ 		sender ! localMessage(result)
       }
     }
-    remote ! results(str)
-    sender ! "Close"
+   // remote ! results(str)
+    //sender ! "Close"
+  
   }
 }
 
@@ -98,11 +104,9 @@ class Master(a: Int) extends Actor {
   def noOfActors = a
   //def noOfZeros = k
   var stop = 0
-  val workers = new Array[ActorRef](noOfActors)
-  for (i <- 0 until a) {
-    //println("intialization of actors")
-    workers(i) = context.actorOf(Props(new Worker(20)), name = "actor" + "%s".format(i))
-  }
+ val worker = context.actorOf(Props(new Worker(20)).withRouter(RoundRobinRouter(noOfActors)), name = "worker")
+ var result: ArrayBuffer[String] = new ArrayBuffer[String]();
+  val message_count = 50
 
   def receive = {
     case "askServer" => 
@@ -111,17 +115,28 @@ class Master(a: Int) extends Actor {
 
     case start(noOfZeros : Int) =>
      println("started calculate")
-      var i = 0
-      while (i < a) {
-        //println("in while loop " + i)
-        workers(i) ! Work(noOfZeros,sender)
-        i = i + 1
-      }
+       
+        for (i <- 1 to message_count) {
+    // println("message no : "+i)
+      worker ! Work(noOfZeros)
+    }
+    case localMessage(res : String) => {
+     	//	println("success local msg")
+       result+=res
+    }
     case "Close" =>
       stop += 1
-      if (stop == a) {
-       // println("Shutting system down")
-        context.system.shutdown()
+      println("No of messages : "+stop)
+      if (stop == message_count) {
+      println("sending results")
+      var re="From client"
+      for(i <- 0 until result.length) re+=result(i)
+      println(re)
+       remote ! results1(re)
+     //   remote ! results(result)
+        println("Shutting system down")
+        //context.system.shutdown()
+        context.stop(self)
         System.exit(0)
       }
     // 
