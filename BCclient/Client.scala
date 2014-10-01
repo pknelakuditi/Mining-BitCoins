@@ -15,7 +15,12 @@ case class results(str : ArrayBuffer[String])
 case class localMessage(res : String)
 case class results1(res : String)
 
-object Remote extends App {	
+object Remote {
+
+ def main(args: Array[String]) {	
+
+val ip =if( args.length > 0)  args(0).toString else "127.0.0.1"
+
    val hostname = InetAddress.getLocalHost.getHostName
    val config = ConfigFactory.parseString(
       """akka{
@@ -28,28 +33,31 @@ object Remote extends App {
 						hostname = "127.0.0.1"
 						port = 2220
 					}
-				}     
+				}   
+				log-dead-letters = 10
+  log-dead-letters-during-shutdown = on  
     	}""")
 	implicit val clientSystem = ActorSystem("HelloClientSys",ConfigFactory.load(config))
-	val master = clientSystem.actorOf(Props(new Master(3)), name = "ClientMaster")
+	
+	val master = clientSystem.actorOf(Props(new Master(3,ip)), name = "ClientMaster")
 	
 	master ! "askServer"
     
-
+}
 
 }
 
 
 
-case class Work(noOfZeros: Int)
+case class Work(noOfZeros: Int,length: Int)
 
-class Worker(length: Int) extends Actor {
+class Worker() extends Actor {
 
   def receive = {
 
-    case Work(k) =>
+    case Work(k,length) =>
      // println("work")
-      calculateBitcoin(k)
+      calculateBitcoin(k,length)
       sender ! "Close"
   }
 
@@ -70,10 +78,10 @@ class Worker(length: Int) extends Actor {
       return hashedString
     }
 
-  def calculateBitcoin(noOfZeros: Int) {
+  def calculateBitcoin(noOfZeros: Int,length: Int) {
    // println("started calulating bit coin")
 
-    val start = System.currentTimeMillis();
+   // val start = System.currentTimeMillis();
    // println(start)
    var str="From CLient "
     val b = "%0" + noOfZeros + "d"
@@ -98,13 +106,13 @@ class Worker(length: Int) extends Actor {
   }
 }
 
-class Master(a: Int) extends Actor {
-	val ip ="127.0.0.1"
+class Master(a: Int,ip : String) extends Actor {
+	
 	val remote = context.actorFor("akka.tcp://HelloServerSys@" + ip + ":5151/user/remoteLiaison")
   def noOfActors = a
   //def noOfZeros = k
   var stop = 0
- val worker = context.actorOf(Props(new Worker(20)).withRouter(RoundRobinRouter(noOfActors)), name = "worker")
+ val worker = context.actorOf(Props(new Worker()).withRouter(RoundRobinRouter(noOfActors)), name = "worker")
  var result: ArrayBuffer[String] = new ArrayBuffer[String]();
   val message_count = 50
 
@@ -118,7 +126,7 @@ class Master(a: Int) extends Actor {
        
         for (i <- 1 to message_count) {
     // println("message no : "+i)
-      worker ! Work(noOfZeros)
+      worker ! Work(noOfZeros,25)
     }
     case localMessage(res : String) => {
      	//	println("success local msg")
@@ -128,11 +136,22 @@ class Master(a: Int) extends Actor {
       stop += 1
       println("No of messages : "+stop)
       if (stop == message_count) {
-      println("sending results")
-      var re="From client"
-      for(i <- 0 until result.length) re+=result(i)
-      println(re)
+   //   println("sending results")
+      var re="From client  "
+      var resflag=0
+      for(i <- 0 until result.length){
+      re+=result(i) 
+      resflag+=1
+      if(resflag==50 || i==result.length-1){
+     //  println(re)
        remote ! results1(re)
+        Thread.sleep(3000L);
+
+       re ="next From client   "
+       resflag=0
+      }          
+      } 
+      
      //   remote ! results(result)
         println("Shutting system down")
         //context.system.shutdown()

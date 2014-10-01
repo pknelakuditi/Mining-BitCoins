@@ -1,4 +1,4 @@
-[0m[[0minfo[0m] [0mRunning Server [0m
+[0m[[0minfo[0m] [0mRunning Server 5 1[0m
 [0m[[0mdebug[0m] [0mWaiting for threads to exit or System.exit to be called.[0m
 [0m[[0mdebug[0m] [0m  Classpath:[0m
 [0m[[0mdebug[0m] [0m	/home/pavan/practice-scala/project1/BCserver/target/scala-2.11/classes[0m
@@ -9,6 +9,6 @@
 [0m[[0mdebug[0m] [0m	/home/pavan/.ivy2/cache/io.netty/netty/bundles/netty-3.8.0.Final.jar[0m
 [0m[[0mdebug[0m] [0m	/home/pavan/.ivy2/cache/com.google.protobuf/protobuf-java/bundles/protobuf-java-2.5.0.jar[0m
 [0m[[0mdebug[0m] [0m	/home/pavan/.ivy2/cache/org.uncommons.maths/uncommons-maths/jars/uncommons-maths-1.2.2a.jar[0m
-[0m[[0mdebug[0m] [0mWaiting for thread run-main-0 to terminate.[0m
-[0m[[0mdebug[0m] [0m	Thread run-main-0 exited.[0m
-[0m[[0mdebug[0m] [0mWaiting for thread HelloServerSys-akka.actor.default-dispatcher-3 to terminate.[0m
+[0m[[0mdebug[0m] [0mWaiting for thread run-main-4 to terminate.[0m
+[0m[[0mdebug[0m] [0m	Thread run-main-4 exited.[0m
+[0m[[0mdebug[0m] [0mWaiting for thread HelloServerSys-akka.actor.default-dispatcher-4 to terminate.[0m

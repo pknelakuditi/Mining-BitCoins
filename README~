@@ -22,13 +22,10 @@ To run succesfully these scala files need to be kept in different projects and s
 This project can be run with sbt also which needs an built.sbt file. use commands 
 
 Server.scala
-------------
 sbt
 compile
 run 4 2
-
 Client.scala
-------------
 sbt 
 compile
 run 127.0.0.1

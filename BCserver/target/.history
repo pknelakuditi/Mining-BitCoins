@@ -7,3 +7,10 @@ run
 compile
 run
 compile
+run 5 1
+compile
+run 5 1
+compile
+run 5 1
+compile
+run 5 1
